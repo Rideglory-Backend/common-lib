@@ -44,8 +44,13 @@ export class RpcAllExceptionsFilter extends BaseRpcExceptionFilter {
     const message =
       exception instanceof Error ? exception.message : 'Internal server error';
     const stack = exception instanceof Error ? exception.stack : undefined;
+    const code = (exception as Record<string, unknown>)?.['code'];
+    const meta = (exception as Record<string, unknown>)?.['meta'];
 
-    this.logger.error(`Unhandled exception: ${message}`, stack);
+    this.logger.error(
+      `Unhandled exception${code ? ` [${code}]` : ''}${meta ? ` meta=${JSON.stringify(meta)}` : ''}: ${message}`,
+      stack,
+    );
 
     return super.catch(
       new RpcException({
