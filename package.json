@@ -14,15 +14,38 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "test": "jest"
   },
   "peerDependencies": {
     "@nestjs/common": ">=11.0.0",
-    "@nestjs/microservices": ">=11.0.0"
+    "@nestjs/microservices": ">=11.0.0",
+    "@sentry/node": ">=8.0.0",
+    "nestjs-cls": ">=4.0.0",
+    "nestjs-pino": ">=4.0.0",
+    "pino-http": ">=10.0.0"
   },
   "devDependencies": {
     "@nestjs/common": "^11.0.1",
     "@nestjs/microservices": "^11.1.19",
+    "@sentry/node": "^10.57.0",
+    "@types/jest": "^30.0.0",
+    "jest": "^30.4.2",
+    "rxjs": "^7.8.2",
+    "ts-jest": "^29.4.11",
     "typescript": "^5.7.3"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "testEnvironment": "node"
   }
 }
