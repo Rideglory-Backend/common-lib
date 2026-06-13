@@ -5,6 +5,7 @@ import {
   NestInterceptor,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
+import * as Sentry from '@sentry/node';
 import { TcpMeta } from './tcp-meta.interface';
 
 /**
@@ -36,6 +37,8 @@ export class ClsRpcInterceptor implements NestInterceptor {
       }>(0);
       const traceId = data?._meta?.traceId;
       if (traceId) {
+        const sentryTrace = data._meta?.sentryTrace;
+        const baggage = data._meta?.baggage;
         // cls.run() creates a fresh AsyncLocalStorage context so that
         // cls.set() never throws "No CLS context available", which is the
         // failure mode when the TCP transport skips the HTTP middleware that
@@ -43,7 +46,13 @@ export class ClsRpcInterceptor implements NestInterceptor {
         return new Observable((subscriber) => {
           void this.cls.run(() => {
             this.cls.set('traceId', traceId);
-            next.handle().subscribe(subscriber);
+            if (sentryTrace) {
+              Sentry.continueTrace({ sentryTrace, baggage }, () => {
+                next.handle().subscribe(subscriber);
+              });
+            } else {
+              next.handle().subscribe(subscriber);
+            }
           });
         });
       }

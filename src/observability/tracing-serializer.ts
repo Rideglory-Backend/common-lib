@@ -19,6 +19,10 @@ export class TracingSerializer implements Serializer {
 
     if (traceId && value?.data !== undefined) {
       const meta: TcpMeta = { traceId };
+      const sentryTrace: string | undefined = this.cls?.get?.('sentryTrace');
+      const baggage: string | undefined = this.cls?.get?.('baggage');
+      if (sentryTrace) meta.sentryTrace = sentryTrace;
+      if (baggage) meta.baggage = baggage;
       (value.data as Record<string, unknown>)['_meta'] = meta;
     }
 
