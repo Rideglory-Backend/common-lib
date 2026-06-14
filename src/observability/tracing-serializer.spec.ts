@@ -61,4 +61,14 @@ describe('TracingSerializer', () => {
     const payload = { pattern: 'test' };
     expect(() => serializer.serialize(payload)).not.toThrow();
   });
+
+  it('should NOT throw when data is a primitive string (e.g. removeEvent uuid)', () => {
+    const cls = makeClsMock('trace-123');
+    const serializer = new TracingSerializer(cls);
+
+    const payload = { pattern: 'removeEvent', data: '9aa9daa0-c7e1-4885-b872-066c45a73f89' };
+    expect(() => serializer.serialize(payload)).not.toThrow();
+    const result = JSON.parse(serializer.serialize(payload)) as { data: unknown };
+    expect(result.data).toBe('9aa9daa0-c7e1-4885-b872-066c45a73f89');
+  });
 });

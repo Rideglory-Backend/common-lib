@@ -14,10 +14,10 @@ export class TracingSerializer implements Serializer {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(private readonly cls: any) {}
 
-  serialize(value: { data?: Record<string, unknown>; [key: string]: unknown }) {
+  serialize(value: { data?: Record<string, unknown> | unknown; [key: string]: unknown }) {
     const traceId: string | undefined = this.cls?.get?.('traceId');
 
-    if (traceId && value?.data !== undefined) {
+    if (traceId && typeof value?.data === 'object' && value.data !== null) {
       const meta: TcpMeta = { traceId };
       const sentryTrace: string | undefined = this.cls?.get?.('sentryTrace');
       const baggage: string | undefined = this.cls?.get?.('baggage');
