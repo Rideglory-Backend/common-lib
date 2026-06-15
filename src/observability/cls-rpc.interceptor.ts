@@ -36,9 +36,11 @@ export class ClsRpcInterceptor implements NestInterceptor {
         [key: string]: unknown;
       }>(0);
       const traceId = data?._meta?.traceId;
+      const sentryTrace = data?._meta?.sentryTrace;
+      const baggage = data?._meta?.baggage;
+      // Strip _meta before the handler runs so it never reaches service DTOs or Prisma.
+      delete data._meta;
       if (traceId) {
-        const sentryTrace = data._meta?.sentryTrace;
-        const baggage = data._meta?.baggage;
         // cls.run() creates a fresh AsyncLocalStorage context so that
         // cls.set() never throws "No CLS context available", which is the
         // failure mode when the TCP transport skips the HTTP middleware that
