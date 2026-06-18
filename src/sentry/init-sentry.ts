@@ -8,9 +8,7 @@ interface InitSentryOptions {
 /**
  * Initializes Sentry for a given microservice.
  *
- * Gate: skips init when:
- *   - NODE_ENV !== 'production' AND SENTRY_DEV_VERIFY !== 'true'
- *   - dsn is not provided
+ * Gate: skips init when NODE_ENV !== 'production' or dsn is not provided.
  *
  * Import this module as the FIRST import in main.ts, before any other module,
  * so that Sentry can instrument NestJS correctly.
@@ -21,13 +19,8 @@ export function initSentry(
   opts?: InitSentryOptions,
 ): void {
   const isProduction = process.env.NODE_ENV === 'production';
-  const isDevVerify = process.env.SENTRY_DEV_VERIFY === 'true';
 
-  if (!isProduction && !isDevVerify) {
-    return;
-  }
-
-  if (!dsn) {
+  if (!isProduction || !dsn) {
     return;
   }
 
